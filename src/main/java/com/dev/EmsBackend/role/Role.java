@@ -1,12 +1,9 @@
 package com.dev.EmsBackend.role;
+// This is the class for role table of the database
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
-@Setter
-@Getter
 @Entity
 @Table(name = "role")
 public class Role {
@@ -33,6 +30,30 @@ public class Role {
 
     public Role() {
 
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

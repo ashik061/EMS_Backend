@@ -1,5 +1,5 @@
 package com.dev.EmsBackend.role;
-
+//This class will expose the APIs for roles
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
