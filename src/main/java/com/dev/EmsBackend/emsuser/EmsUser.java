@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "emsuser")
 public class EmsUser {
     @Id
