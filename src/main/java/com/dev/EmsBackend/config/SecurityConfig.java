@@ -26,6 +26,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.security.Key;
@@ -58,15 +60,22 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->{
                     auth.requestMatchers("/auth/**").permitAll();
+                    auth.requestMatchers("/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers("/user/**").hasRole("STUDENT");
                     auth.anyRequest().authenticated();
-                })
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .build();
+                });
+        httpSecurity
+                .oauth2ResourceServer()
+                    .jwt()
+                    .jwtAuthenticationConverter(jwtAuthenticationConverter());
+        httpSecurity
+                .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        return httpSecurity.build();
 
     }
     @Bean
@@ -80,5 +89,16 @@ public class SecurityConfig {
         JWKSource<SecurityContext> jwkSource= new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwkSource);
     }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter(){
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter= new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
+        jwtConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        return jwtConverter;
+    }
+
 
 }

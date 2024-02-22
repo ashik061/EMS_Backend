@@ -27,7 +27,6 @@ public class EmsUser implements UserDetails {
     private String password;
     private boolean status = true; // User is active by default
 
-    @Column(name = "role_id")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role_join",
@@ -36,7 +35,7 @@ public class EmsUser implements UserDetails {
     )
     private Set<Role> authorities;
 
-    public EmsUser(Set<Role> authority) {
+    public EmsUser() {
         super();
         this.authorities = new HashSet<Role>();
     }
@@ -53,6 +52,16 @@ public class EmsUser implements UserDetails {
         this.authorities = authorities;
     }
 
+    public EmsUser(UUID userId, String email, String phone, String name, String password, boolean status, Set<Role> authorities) {
+        this.userId = userId;
+        this.email = email;
+        this.phone = phone;
+        this.name = name;
+        this.password = password;
+        this.status = status;
+        this.authorities = authorities;
+    }
+
     public EmsUser(String email, String phone, String name, String password) {
         super();
         this.email = email;
@@ -61,8 +70,48 @@ public class EmsUser implements UserDetails {
         this.password = password;
     }
 
-    public EmsUser() {
-        super();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.authorities;
+    }
+
+    public void setAuthorities(Set<Role> authorities){
+        this.authorities = authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public UUID getUserId() {
@@ -97,10 +146,6 @@ public class EmsUser implements UserDetails {
         this.name = name;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public boolean isStatus() {
         return status;
     }
@@ -108,43 +153,6 @@ public class EmsUser implements UserDetails {
     public void setStatus(boolean status) {
         this.status = status;
     }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-
 
 
 }
