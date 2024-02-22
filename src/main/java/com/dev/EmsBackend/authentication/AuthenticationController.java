@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")    
+@RequestMapping("/auth")
 @CrossOrigin("*")
 public class AuthenticationController {
 
@@ -20,4 +20,9 @@ public class AuthenticationController {
     public EmsUser registerNewUser(@RequestBody RegistrationDTO body){
         return authenticationService.registerNewUser(body.getEmail(), body.getPassword());
     }
+    @PostMapping("/login")
+    public LoginResponseDTO loginUser(@RequestBody RegistrationDTO body){
+        return authenticationService.loginUser(body.getEmail(), body.getPassword());
+    }
+
 }
