@@ -28,14 +28,14 @@ public class EmsUserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    public void addNewUser(EmsUser emsUser) {
-        Optional<EmsUser> userByEmail= userRepository
-                .findEmsUserByEmail(emsUser.getEmail());
-        if (userByEmail.isPresent()){
-            throw new IllegalStateException("This email is already registered");
-        }
-        userRepository.save(emsUser);
-    }
+//    public void addNewUser(EmsUser emsUser) {
+//        Optional<EmsUser> userByEmail= userRepository
+//                .findEmsUserByEmail(emsUser.getEmail());
+//        if (userByEmail.isPresent()){
+//            throw new IllegalStateException("This email is already registered");
+//        }
+//        userRepository.save(emsUser);
+//    }
 
     @Autowired
     private PasswordEncoder encoder;
