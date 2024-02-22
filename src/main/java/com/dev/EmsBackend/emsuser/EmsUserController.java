@@ -2,9 +2,11 @@ package com.dev.EmsBackend.emsuser;
 //This class will expose the APIs for emsusers
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/user")
@@ -22,14 +24,14 @@ public class EmsUserController {
         return "Hello from user.";
     }
 
-//    @GetMapping
-//    public List<EmsUser> getAllUsers(){
-//        return userService.getAllUsers();
-//    }
-//
-//    @PostMapping
-//    public void addNewUser(@RequestBody EmsUser emsUser){
-//        userService.addNewUser(emsUser);
-//    }
+    @GetMapping("/profile/{uuid}")
+    public ResponseEntity<EmsUser> viewUserDetails(@PathVariable UUID uuid){
+        return userService.viewUserDetails(uuid);
+    }
+
+    @PutMapping("/profile/{uuid}")
+    public ResponseEntity<EmsUser> updateUserProfile(@PathVariable UUID uuid, @RequestBody EmsUser emsUserDetails){
+        return userService.updateUserDetails(uuid, emsUserDetails);
+    }
 
 }
