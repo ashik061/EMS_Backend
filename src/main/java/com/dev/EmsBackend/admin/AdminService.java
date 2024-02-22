@@ -1,41 +1,64 @@
 package com.dev.EmsBackend.admin;
 
 import com.dev.EmsBackend.emsuser.EmsUser;
+import com.dev.EmsBackend.emsuser.EmsUserRepository;
 import com.dev.EmsBackend.emsuser.EmsUserService;
 import com.dev.EmsBackend.role.Role;
+import com.dev.EmsBackend.role.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class AdminService {
 
-    private final EmsUserService userService;
-
     @Autowired
-    public AdminService(EmsUserService userService) {
-        this.userService = userService;
+    private final EmsUserRepository userRepository;
+    @Autowired
+    private final RoleRepository roleRepository;
+
+    public AdminService(EmsUserRepository userRepository, RoleRepository roleRepository) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
-    public void viewAllTeachers() {
-        // Logic to view all teachers
+    public List<EmsUser> viewAllUsers() {
+        return userRepository.findAll();
     }
 
-    public void viewAllStudents() {
-        // Logic to view all students
+    public EmsUser createNewUser(EmsUser emsUser) {
+        return userRepository.save(emsUser);
     }
 
-    public void addRoleToUser(UUID userId, Role role) {
-        // Logic to add roles to users (TEACHER or STUDENT)
+    public ResponseEntity<EmsUser> viewUserDetails(UUID uuid) {
+        EmsUser emsUser = userRepository.findById(uuid)
+                .orElseThrow(()-> new IllegalStateException("User not found !"));
+        return ResponseEntity.ok(emsUser);
     }
 
-    public void deactivateUser(UUID userId) {
-        // Logic to deactivate a user
+    public ResponseEntity<EmsUser> updateUserDetails(UUID uuid, EmsUser emsUserDetails) {
+        EmsUser emsUser = userRepository.findById(uuid)
+                .orElseThrow(()-> new IllegalStateException("User not found !"));
+        emsUser.setEmail(emsUserDetails.getEmail());
+        emsUser.setName(emsUserDetails.getName());
+        emsUser.setPhone(emsUserDetails.getPhone());
+        emsUser.setPassword(emsUserDetails.getPassword());
+        emsUser.setStatus(emsUserDetails.isStatus());
+
+        EmsUser updatedUser = userRepository.save(emsUser);
+        return ResponseEntity.ok(updatedUser);
     }
 
-    public void createDefaultAdminAccount() {
-        // Logic to create a default admin account
-        // Ensure ADMIN role is assigned
+    public ResponseEntity<Map<String, Boolean>> deleteUser(UUID uuid) {
+        EmsUser emsUser = userRepository.findById(uuid)
+                .orElseThrow(()-> new IllegalStateException("User not found !"));
+
+        userRepository.delete(emsUser);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return ResponseEntity.ok(response);
     }
 }
