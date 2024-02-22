@@ -1,51 +1,60 @@
 package com.dev.EmsBackend.emsuser;
 // This is the class for EmsUser table of database
 
+import com.dev.EmsBackend.role.Role;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "emsuser")
-public class EmsUser {
+public class EmsUser implements UserDetails {
     @Id
-    @SequenceGenerator(
-            name = "emsuser_sequence",
-            sequenceName = "emsuser_sequence",
-            allocationSize = 1)
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "emsuser_sequence")
-
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id", updatable = false, nullable = false)
     private UUID userId;
-
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
-
-    @Column(name = "phone")
     private String phone;
-
-    @Column(name = "name")
     private String name;
-
     @Column(name = "password", nullable = false)
     private String password;
-
-    @Column(name = "status", nullable = false)
     private boolean status = true; // User is active by default
 
     @Column(name = "role_id")
-    private String roleId = "student"; // A default user is a student
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role_join",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")}
+    )
+    private Set<Role> authorities;
+
+    public EmsUser(Set<Role> authority) {
+        super();
+        this.authorities = new HashSet<Role>();
+    }
 
     public EmsUser(String email, String password) {
+        super();
         this.email = email;
         this.password = password;
     }
 
+    public EmsUser(String email, String password, Set<Role> authorities) {
+        this.email = email;
+        this.password = password;
+        this.authorities = authorities;
+    }
+
     public EmsUser(String email, String phone, String name, String password) {
+        super();
         this.email = email;
         this.phone = phone;
         this.name = name;
@@ -53,7 +62,15 @@ public class EmsUser {
     }
 
     public EmsUser() {
+        super();
+    }
 
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getEmail() {
@@ -80,10 +97,6 @@ public class EmsUser {
         this.name = name;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -96,23 +109,42 @@ public class EmsUser {
         this.status = status;
     }
 
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
     @Override
-    public String toString() {
-        return "EmsUser{" +
-                "email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", status=" + status +
-                ", roleId='" + roleId + '\'' +
-                '}';
+    public String getPassword() {
+        return this.password;
     }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+
+
+
 }

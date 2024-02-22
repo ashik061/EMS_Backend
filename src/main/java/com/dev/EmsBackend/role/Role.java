@@ -3,49 +3,41 @@ package com.dev.EmsBackend.role;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Table(name = "role")
-public class Role {
+public class Role implements GrantedAuthority {
     @Id
-//    @SequenceGenerator(
-//            name = "role_sequence",
-//            sequenceName = "role_sequence",
-//            allocationSize = 1)
-//    @GeneratedValue(
-//            strategy = GenerationType.SEQUENCE,
-//            generator = "role_sequence")
+//    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "role_id")
-    private String roleId;
+    private Integer roleId;
     @Column(name = "role")
-    private String role;
+    private String authority;
     @Column(name = "description")
     private String description;
 
-    public Role(String roleId, String role, String description) {
+    public Role(Integer roleId, String authority, String description) {
+        super();
         this.roleId = roleId;
-        this.role = role;
+        this.authority = authority;
         this.description = description;
     }
 
-    public Role() {
-
+    public Role(String authority) {
+        this.authority=authority;
     }
 
-    public String getRoleId() {
+    public Role() {
+        super();
+    }
+
+    public Integer getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(String roleId) {
+    public void setRoleId(Integer roleId) {
         this.roleId = roleId;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getDescription() {
@@ -57,11 +49,12 @@ public class Role {
     }
 
     @Override
-    public String toString() {
-        return "Role{" +
-                "roleId='" + roleId + '\'' +
-                ", role='" + role + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+    public String getAuthority() {
+        return this.authority;
     }
+
+    public void setAuthority(){
+        this.authority=authority;
+    }
+
 }
