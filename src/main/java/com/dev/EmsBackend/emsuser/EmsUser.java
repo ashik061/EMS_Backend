@@ -46,6 +46,13 @@ public class EmsUser implements UserDetails {
         this.password = password;
     }
 
+    public EmsUser(String name, String email, String password) {
+        super();
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
     public EmsUser(String email, String password, Set<Role> authorities) {
         this.email = email;
         this.password = password;

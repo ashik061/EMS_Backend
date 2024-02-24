@@ -43,10 +43,21 @@ public class EmsUserService implements UserDetailsService {
     public ResponseEntity<EmsUser> updateUserDetails(UUID uuid, EmsUser emsUserDetails) {
         EmsUser emsUser = userRepository.findById(uuid)
                 .orElseThrow(()-> new IllegalStateException("User not found !"));
-        emsUser.setEmail(emsUserDetails.getEmail());
-        emsUser.setName(emsUserDetails.getName());
-        emsUser.setPhone(emsUserDetails.getPhone());
-        emsUser.setPassword(emsUserDetails.getPassword());
+        if (emsUserDetails.getEmail() != null) {
+            emsUser.setEmail(emsUserDetails.getEmail());
+        }
+
+        if (emsUserDetails.getName() != null) {
+            emsUser.setName(emsUserDetails.getName());
+        }
+
+        if (emsUserDetails.getPhone() != null) {
+            emsUser.setPhone(emsUserDetails.getPhone());
+        }
+
+        if (emsUserDetails.getPassword() != null) {
+            emsUser.setPassword(emsUserDetails.getPassword());
+        }
 
         EmsUser updatedUser = userRepository.save(emsUser);
         return ResponseEntity.ok(updatedUser);
